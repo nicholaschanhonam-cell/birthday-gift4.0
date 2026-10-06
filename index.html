@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Happy 27th Birthday Tiffany 🎂</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Great+Vibes&family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: {
+              100: '#FFF4D6',
+              300: '#FCE09B',
+              400: '#F7CE68',
+              500: '#E5B13A',
+              600: '#C79222',
+            },
+            navy: {
+              900: '#070A13',
+              800: '#0C1222',
+            }
+          },
+          fontFamily: {
+            serif: ['Noto Serif TC', 'serif'],
+            cinzel: ['Cinzel', 'serif'],
+            script: ['Great Vibes', 'cursive'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background: radial-gradient(circle at 50% 20%, #151d33 0%, #080c18 60%, #03050a 100%);
+      color: #E2E8F0;
+      font-family: 'Noto Serif TC', serif;
+      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #FFF4D6 0%, #FCE09B 25%, #E5B13A 50%, #F7CE68 75%, #B88217 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gold-glass {
+      background: rgba(12, 18, 34, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(229, 177, 58, 0.35);
+      box-shadow: inset 0 0 20px rgba(229, 177, 58, 0.1), 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+
+    .gashapon-globe {
+      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.5) 100%);
+      border: 2px solid rgba(247, 206, 104, 0.4);
+      box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.15), 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-6deg); }
+      75% { transform: rotate(6deg); }
+    }
+
+    .animate-shake {
+      animation: shake 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body class="relative w-full h-full p-4 flex flex-col justify-between items-center select-none">
+
+  <!-- Background Stars Canvas -->
+  <canvas id="stars-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+  <!-- Header Section -->
+  <header class="relative z-10 text-center max-w-lg mt-2 mb-3">
+    <div class="inline-block px-3 py-1 rounded-full border border-gold-500/40 bg-navy-800/80 mb-2 text-gold-300 text-[11px] sm:text-xs tracking-widest font-cinzel">
+      ✨ OCTOBER SPECIAL CELEBRATION ✨
+    </div>
+    <h1 class="font-script text-4xl sm:text-6xl gold-gradient-text drop-shadow-md leading-tight">
+      Happy 27th Birthday
+    </h1>
+    <h2 class="text-lg sm:text-2xl font-bold text-slate-100 mt-1">
+      親愛的 <span class="gold-gradient-text font-serif">Tiffany（曾樂澄）</span>，27歲生日快樂！🎂💖
+    </h2>
+    <div id="status-badge" class="mt-2 inline-block text-xs sm:text-sm text-gold-300 bg-navy-800/90 px-4 py-1.5 rounded-full border border-gold-500/30 shadow-md transition-all">
+      💡 請點擊下方金幣投幣，扭出妳的專屬生日驚喜吧！🪙
+    </div>
+  </header>
+
+  <!-- Gashapon Machine Container -->
+  <main class="relative z-10 w-full max-w-sm gold-glass rounded-3xl p-5 flex flex-col items-center">
+    
+    <!-- Machine Top Badge -->
+    <div class="w-full text-center py-1.5 rounded-t-xl bg-gradient-to-r from-gold-600 via-gold-400 to-gold-600 text-navy-900 font-cinzel font-black tracking-widest text-xs shadow-md mb-4 flex items-center justify-between px-3">
+      <span>✦</span>
+      <span>TIFFANY'S SURPRISE MACHINE</span>
+      <span>✦</span>
+    </div>
+
+    <!-- Machine Globe -->
+    <div class="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full gashapon-globe overflow-hidden flex items-center justify-center mb-4">
+      <div id="globe-capsules" class="relative w-full h-full p-4 flex flex-wrap items-center justify-center gap-2 transition-transform duration-500">
+        <!-- Capsules generated dynamically -->
+      </div>
+      <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none rounded-full"></div>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="w-full bg-navy-900/90 rounded-2xl p-3 border border-gold-500/30 flex flex-col items-center gap-3">
+      
+      <div class="w-full flex items-center justify-around">
+        <!-- Coin Slot -->
+        <div class="flex flex-col items-center gap-1">
+          <span class="text-[10px] text-gold-300 font-cinzel tracking-wider">INSERT COIN</span>
+          <div id="coin-slot" onclick="insertCoin()" class="w-14 h-14 rounded-2xl bg-navy-800 border-2 border-dashed border-gold-500/50 flex flex-col items-center justify-center cursor-pointer hover:border-gold-300 transition-all">
+            <div class="w-2 h-7 bg-slate-900 rounded-full border border-gold-500/80"></div>
+            <span class="text-[9px] text-gold-400 mt-0.5">投幣口</span>
+          </div>
+        </div>
+
+        <!-- Twist Knob -->
+        <div class="flex flex-col items-center gap-1">
+          <span class="text-[10px] text-gold-300 font-cinzel tracking-wider">TWIST KNOB</span>
+          <button id="twist-btn" onclick="twistKnob()" disabled class="w-16 h-16 rounded-full bg-gradient-to-br from-gold-300 via-gold-500 to-gold-600 p-1 shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105 active:scale-95 transition-all flex items-center justify-center">
+            <div class="w-full h-full rounded-full bg-navy-900 flex items-center justify-center border border-gold-300/50">
+              <div id="knob-handle" class="w-11 h-3 bg-gradient-to-r from-gold-400 to-gold-600 rounded-full shadow-inner transition-transform duration-700"></div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ejection Tray -->
+      <div class="w-full h-16 bg-black/60 rounded-xl border border-gold-500/30 flex items-center justify-center relative overflow-hidden shadow-inner">
+        <span class="text-[10px] text-slate-500 font-cinzel absolute top-1">PRIZE TRAY</span>
+        <div id="exit-tray" class="w-full h-full flex items-center justify-center">
+          <!-- Ejected capsule will appear here -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Draggable/Clickable Gold Coin -->
+    <div id="coin-container" class="mt-4 flex flex-col items-center">
+      <button id="gold-coin" onclick="insertCoin()" class="w-14 h-14 rounded-full bg-gradient-to-tr from-gold-600 via-gold-300 to-gold-100 p-1 shadow-xl cursor-pointer hover:scale-110 active:scale-95 transition-all animate-bounce flex items-center justify-center border-2 border-gold-100">
+        <div class="w-full h-full rounded-full border border-gold-600/60 flex items-center justify-center text-navy-900 font-bold text-sm shadow-inner font-cinzel">
+          27th
+        </div>
+      </button>
+      <span class="text-[11px] text-gold-400 mt-1 font-serif">🪙 點擊金幣投幣</span>
+    </div>
+
+  </main>
+
+  <footer class="relative z-10 text-center my-2 text-[10px] text-slate-500 font-cinzel">
+    Made with Endless Love for Tiffany 曾樂澄 • 27th Birthday
+  </footer>
+
+  <!-- Surprise Modal -->
+  <div id="surprise-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-400">
+    <div id="modal-card" class="relative w-full max-w-sm gold-glass rounded-3xl p-6 text-center shadow-2xl transform scale-90 transition-transform duration-300 border-2 border-gold-400">
+      
+      <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-tr from-gold-500 to-gold-200 p-1 flex items-center justify-center shadow-lg animate-pulse">
+        <span class="text-3xl">🎁</span>
+      </div>
+
+      <h3 class="text-xl font-bold gold-gradient-text mb-3 font-serif leading-snug">
+        特別為你準備六份禮物，希望你鍾意 🎁✨
+      </h3>
+
+      <button onclick="closeModal()" class="w-full py-3 px-6 rounded-xl bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 text-navy-900 font-bold text-sm shadow-lg hover:brightness-110 active:scale-95 transition-all mt-2">
+        開心收下 💕
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // State Tracking
+    let coinInserted = false;
+    let isSpinning = false;
+    let capsuleEjected = false;
+
+    // Capsule Colors
+    const capsuleGradients = [
+      'from-pink-500 to-rose-600',
+      'from-amber-400 to-yellow-600',
+      'from-purple-500 to-indigo-600',
+      'from-cyan-400 to-blue-600',
+      'from-emerald-400 to-teal-600',
+      'from-red-500 to-pink-600'
+    ];
+
+    // Populate Globe Capsules
+    function initGlobe() {
+      const container = document.getElementById('globe-capsules');
+      container.innerHTML = '';
+      for (let i = 0; i < 10; i++) {
+        const grad = capsuleGradients[i % capsuleGradients.length];
+        const cap = document.createElement('div');
+        cap.className = `w-10 h-10 rounded-full bg-gradient-to-tr ${grad} border border-white/40 shadow-md transform rotate-${(i * 35) % 360} flex items-center justify-center`;
+        cap.innerHTML = `<div class="w-full h-1/2 bg-white/20 rounded-t-full border-b border-white/30"></div>`;
+        container.appendChild(cap);
+      }
+    }
+
+    // Insert Coin Logic
+    function insertCoin() {
+      if (coinInserted || isSpinning || capsuleEjected) return;
+
+      coinInserted = true;
+      playCoinSound();
+
+      const coinBtn = document.getElementById('gold-coin');
+      const statusBadge = document.getElementById('status-text') || document.getElementById('status-badge');
+      const twistBtn = document.getElementById('twist-btn');
+
+      coinBtn.style.transform = 'scale(0)';
+      coinBtn.style.opacity = '0';
+
+      setTimeout(() => {
+        document.getElementById('coin-container').style.display = 'none';
+        twistBtn.disabled = false;
+        statusBadge.innerHTML = '✅ 金幣已投入！請點擊右側旋鈕扭出驚喜 🔄';
+        statusBadge.classList.add('border-gold-400', 'text-gold-200');
+
+        confetti({
+          particleCount: 20,
+          spread: 40,
+          origin: { y: 0.7 }
+        });
+      }, 300);
+    }
+
+    // Twist Knob Logic
+    function twistKnob() {
+      if (!coinInserted || isSpinning || capsuleEjected) return;
+
+      isSpinning = true;
+      document.getElementById('twist-btn').disabled = true;
+
+      const handle = document.getElementById('knob-handle');
+      const capsules = document.getElementById('globe-capsules');
+      const statusBadge = document.getElementById('status-badge');
+
+      playTwistSound();
+
+      handle.style.transform = 'rotate(360deg)';
+      capsules.classList.add('animate-shake');
+
+      statusBadge.innerHTML = '🌀 扭蛋機轉動中... 驚喜掉落中！';
+
+      setTimeout(() => {
+        capsules.classList.remove('animate-shake');
+        ejectCapsule();
+      }, 1000);
+    }
+
+    // Eject Capsule into Tray
+    function ejectCapsule() {
+      playEjectSound();
+
+      const exitTray = document.getElementById('exit-tray');
+      const statusBadge = document.getElementById('status-badge');
+
+      exitTray.innerHTML = `
+        <button onclick="openModal()" class="w-12 h-12 rounded-full bg-gradient-to-tr from-gold-400 via-pink-500 to-gold-200 border-2 border-white shadow-xl cursor-pointer hover:scale-110 active:scale-95 transition-transform animate-bounce flex items-center justify-center">
+          <span class="text-lg">✨</span>
+        </button>
+      `;
+
+      capsuleEjected = true;
+      isSpinning = false;
+
+      statusBadge.innerHTML = '🎉 扭蛋已掉落！點擊托盤中的扭蛋開啟驚喜吧！👇';
+
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.75 }
+      });
+    }
+
+    // Modal Handlers
+    function openModal() {
+      playOpenSound();
+
+      const modal = document.getElementById('surprise-modal');
+      const card = document.getElementById('modal-card');
+
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      card.classList.remove('scale-90');
+      card.classList.add('scale-100');
+
+      confetti({
+        particleCount: 120,
+        spread: 100,
+        origin: { y: 0.5 }
+      });
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('surprise-modal');
+      const card = document.getElementById('modal-card');
+
+      card.classList.remove('scale-100');
+      card.classList.add('scale-90');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    // Audio Synthesis Helpers
+    function playCoinSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(987.77, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1318.51, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+      } catch(e) {}
+    }
+
+    function playTwistSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(220, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(440, ctx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.4);
+      } catch(e) {}
+    }
+
+    function playEjectSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(261.63, ctx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.4, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+      } catch(e) {}
+    }
+
+    function playOpenSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.1);
+        osc.frequency.setValueAtTime(783.99, now + 0.2);
+        osc.frequency.setValueAtTime(1046.50, now + 0.3);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(now + 0.5);
+      } catch(e) {}
+    }
+
+    // Stars Background Animation
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    class Star {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.opacity = Math.random() * 0.8 + 0.2;
+        this.speed = Math.random() * 0.02 + 0.005;
+      }
+      update() {
+        this.opacity += Math.sin(Date.now() * this.speed) * 0.01;
+      }
+      draw() {
+        ctx.fillStyle = `rgba(255, 244, 214, ${Math.abs(this.opacity)})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function initStars() {
+      resizeCanvas();
+      stars = [];
+      for (let i = 0; i < 70; i++) {
+        stars.push(new Star());
+      }
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(s => {
+        s.update();
+        s.draw();
+      });
+      requestAnimationFrame(animateStars);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    window.onload = function() {
+      initGlobe();
+      initStars();
+      animateStars();
+    };
+  </script>
+</body>
+</html>
